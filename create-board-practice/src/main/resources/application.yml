@@ -29,6 +29,12 @@ spring:
 
 ---
 
-spring:
-  config.activate.on-profile: testdb
-#  datasource.url: jdbc:h2:mem:testdb
+#spring:
+#  config.activate.on-profile: testdb
+#  datasource:
+#    url: jdbc:h2:mem:board;mode=mysql
+#    driver-class-name: org.h2.Driver
+#  sql.init.mode: always
+#  # ActiveProfiles 와 연관있음.
+#  # 전역변수로 설정.
+#  test.database.replace: none
