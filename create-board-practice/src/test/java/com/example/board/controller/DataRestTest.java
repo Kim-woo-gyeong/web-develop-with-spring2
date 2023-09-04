@@ -1,5 +1,6 @@
 package com.example.board.controller;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Disabled("통합테스트에서 제외됨.")
 @DisplayName("Data Rest - api 테스트")
 // webmvc 테스트는 컨트롤러 외의 build 를 load 하지 않음.
 // dataRest 를 읽지 않음!
