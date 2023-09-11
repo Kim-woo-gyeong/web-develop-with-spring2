@@ -21,14 +21,13 @@ public class ArticleControllerTest {
         this.mvc = mvc;
     }
 
-    @Disabled("개발중")
     @DisplayName("[View][GET] 게시글 리스트 페이지 테스트")
     @Test
     void createTest1() throws Exception {
         // given
         mvc.perform(get("/articles"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.TEXT_HTML))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(view().name("articles/index"))   // 해당 경로에 view 가 있는지 확인
                 .andExpect(model().attributeExists("articles"));
 
