@@ -34,14 +34,13 @@ public class ArticleControllerTest {
         // when & then
     }
 
-    @Disabled("개발중")
     @DisplayName("[View][GET] 게시글 상세 페이지 테스트")
     @Test
     void createTest2() throws Exception {
         // given
         mvc.perform(get("/articles/1"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.TEXT_HTML))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(view().name("articles/detail"))
                 .andExpect(model().attributeExists("article"))
                 .andExpect(model().attributeExists("articleComments"));
