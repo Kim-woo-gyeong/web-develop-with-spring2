@@ -27,6 +27,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-rest'
     implementation 'org.springframework.data:spring-data-rest-hal-explorer'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    // spring initializer 에서 spring security + thymeleaf 를 같이 explore 해야 나오는 의존성! 중요.
+    // defualt login page -> 이미 로그인 화면이 만들어짐.
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
     compileOnly 'org.projectlombok:lombok'
     // 사용자가 직접만든 것을 문서화 할 수 있음.
@@ -35,6 +39,7 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
 
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
