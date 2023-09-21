@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 //public class AuditingFields {
-// abstract 추가 : 좀더 의미 부여를 하기 위해서
+// abstract 추가 : 상속이라는 의미를 부여 하기 위해서
 public abstract class AuditingFields{
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @CreatedDate
