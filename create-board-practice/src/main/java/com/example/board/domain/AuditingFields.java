@@ -18,7 +18,9 @@ import java.time.LocalDateTime;
 @ToString
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
-public class AuditingFields {
+//public class AuditingFields {
+// abstract 추가 : 상속이라는 의미를 부여 하기 위해서
+public abstract class AuditingFields{
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @CreatedDate
     @Column(nullable = false, updatable = false)

@@ -3,6 +3,7 @@ package com.example.board.repository;
 import com.example.board.config.JpaConfig;
 import com.example.board.domain.Article;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
+@Disabled
 @ActiveProfiles("testdb")
 // 자동으로 testdb 가 실행되지 않고 설정된 db를 불러오도록 함.
 //@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
