@@ -2000,3 +2000,10 @@ insert into article_comment (article_id, content, created_at, created_by, modifi
 insert into article_comment (article_id, content, created_at, created_by, modified_at, modified_by) values (47, 'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis faucibus accumsan odio. Curabitur convallis. Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor.', '2023-03-07 09:23:00', 'Bevin', '2023-07-26 19:48:52', 'Casey');
 insert into article_comment (article_id, content, created_at, created_by, modified_at, modified_by) values (76, 'Proin eu mi.', '2023-03-15 08:39:51', 'Rita', '2023-03-27 01:57:25', 'Sigismond');
 insert into article_comment (article_id, content, created_at, created_by, modified_at, modified_by) values (40, 'Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus. Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero. Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh. In quis justo.', '2023-04-18 06:59:54', 'Coralie', '2022-12-24 06:38:42', 'Ephrem');
+
+-- user account 생성
+-- 테스트 계정
+-- TODO: 테스트용이지만 비밀번호가 노출된 데이터 세팅. 개선하는 것이 좋을 지 고민해 보자.
+insert into user_account (user_id, user_password, nickname, email, memo, created_at, created_by, modified_at, modified_by) values
+    ('uno', 'asdf1234', 'Uno', 'uno@mail.com', 'I am Uno.', now(), 'uno', now(), 'uno')
+;
