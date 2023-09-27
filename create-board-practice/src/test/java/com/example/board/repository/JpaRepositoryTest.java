@@ -2,6 +2,8 @@ package com.example.board.repository;
 
 import com.example.board.config.JpaConfig;
 import com.example.board.domain.Article;
+import com.example.board.domain.UserAccount;
+import com.example.board.dto.UserAccountDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -14,8 +16,9 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
-@Disabled
-@ActiveProfiles("testdb")
+import static org.mockito.BDDMockito.*;
+
+//@ActiveProfiles("testdb")
 // 자동으로 testdb 가 실행되지 않고 설정된 db를 불러오도록 함.
 //@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DisplayName("jpa 연결 테스트")
@@ -24,14 +27,17 @@ import java.util.List;
 public class JpaRepositoryTest {
     private final ArticleRepository articleRepository;
     private final ArticleCommentRepository articleCommentRepository;
+    private final UserAccountRePository userAccountRepository;
 
     // 생성자주입패턴 생성
     public JpaRepositoryTest(
                             @Autowired ArticleRepository articleRepository
                            ,@Autowired ArticleCommentRepository articleCommentRepository
+                           ,@Autowired UserAccountRePository userAccountRepository
     ) {
         this.articleRepository = articleRepository;
         this.articleCommentRepository = articleCommentRepository;
+        this.userAccountRepository = userAccountRepository;
     }
 
     @DisplayName("select 테스트")
@@ -43,7 +49,7 @@ public class JpaRepositoryTest {
         List<Article> articles = articleRepository.findAll();
         // Then
         Assertions.assertThat(articles)
-                  .isNotNull().hasSize(501);
+                  .isNotNull().hasSize(1);
     }
 
     @DisplayName("insert 테스트")
@@ -51,9 +57,14 @@ public class JpaRepositoryTest {
     void crudTest2(){
         // Given
         long previousCount = articleRepository.count();
+        UserAccount insert = createUserAccount();
+        //given(userAccountRepository.save(any(UserAccount.class))).willReturn(null);
+
+        UserAccount userAccount = userAccountRepository.save(insert);
+        Article article = createArticle(userAccount);
 
         // When
-         Article savedArticle = articleRepository.save(Article.of("new Title", "new Content", "#new HashTag"));
+         articleRepository.save(article);
 
          // Then
         Assertions.assertThat(articleRepository.count()).isEqualTo(previousCount + 1);
@@ -65,7 +76,7 @@ public class JpaRepositoryTest {
         // Given
         Article article = articleRepository.findById(1L).orElseThrow();
         String updateHashTag = "#Springboot";
-        article.setHashTag(updateHashTag);
+        article.setHashtag(updateHashTag);
 
         // When
         // Step2. save -> saveAndFlush
@@ -98,5 +109,24 @@ public class JpaRepositoryTest {
         // Then
         Assertions.assertThat(articleRepository.count()).isEqualTo(previousArticleCount - 1);
         Assertions.assertThat(articleCommentRepository.count()).isEqualTo(previousArticleCommentCount - previousCount);
+    }
+
+    private UserAccount createUserAccount() {
+        return UserAccount.of(
+                "kwg",
+                "password",
+                "kwgyeong0423@gmail.com",
+                null,
+                "this is memo"
+        );
+    }
+
+    private Article createArticle(UserAccount entity) {
+        return Article.of(
+                entity,
+                "title",
+                "content",
+                "#java"
+        );
     }
 }
