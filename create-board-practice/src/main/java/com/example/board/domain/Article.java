@@ -4,22 +4,14 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@ToString
+@ToString(callSuper = true) // 상속받은 정보까지 출력.
 @Getter
 @Table(indexes = {
         @Index(columnList = "title"),
-        @Index(columnList = "hashTag"),
         @Index(columnList = "createdAt"),
         @Index(columnList = "createdBy")
 })
@@ -36,6 +28,9 @@ public class Article extends AuditingFields{
     @Setter @Column(nullable = false, length = 10000)
     private String content; // 본문
 
+    @Setter @ManyToOne(optional = false)
+    private UserAccount userAccount;    // 유저정보(ID)
+
     // article 에 대한 comments 를 중복허용하지 않고 볼 수 있도록 하겠다.
     // article 테이블에서 왔다는 것을 명시.
     // casecade : 엄청난 종속성을 가지므로 유연하게 수정하는 것이 힘듬. 원치않는 데이터소실이 있을 수 있음.
@@ -47,18 +42,21 @@ public class Article extends AuditingFields{
     private final Set<ArticleComment> articleComments = new LinkedHashSet<>();
 
     @Setter
-    private String hashTag; // 해시태그
+    private String hashtag; // 해시태그
 
     protected Article(){}
 
-    private Article(String title, String content, String hashTag){
+    private Article(UserAccount userAccount, String title, String content, String hashtag){
+        this.userAccount = userAccount;
         this.title = title;
         this.content = content;
-        this.hashTag = hashTag;
+        this.hashtag = hashtag;
+        this.createdBy = createdBy;
+        this.modifiedBy = createdBy;
     }
 
-    public static Article of(String title, String content, String hashTag){
-        return new Article(title, content, hashTag);
+    public static Article of(UserAccount userAccount, String title, String content, String hashtag){
+        return new Article(userAccount, title, content, hashtag);
     }
 
     @Override

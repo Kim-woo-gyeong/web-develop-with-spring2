@@ -10,11 +10,15 @@ import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
+import java.util.List;
+
 @RepositoryRestResource
 public interface ArticleCommentRepository extends
          JpaRepository<ArticleComment, Long>
         , QuerydslPredicateExecutor<ArticleComment>
         , QuerydslBinderCustomizer<QArticle> {
+
+    List<ArticleComment> findByArticle_Id(Long articleId);
 
     // java8 부터 interface 를 직접 구현이 가능해짐.
     @Override
