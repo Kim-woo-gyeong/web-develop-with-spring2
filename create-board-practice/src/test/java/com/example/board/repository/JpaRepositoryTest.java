@@ -17,6 +17,9 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 
 import static org.mockito.BDDMockito.*;
+/*
+* 23.09.27 test
+* */
 
 //@ActiveProfiles("testdb")
 // 자동으로 testdb 가 실행되지 않고 설정된 db를 불러오도록 함.
