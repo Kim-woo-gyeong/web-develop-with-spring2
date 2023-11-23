@@ -7,10 +7,9 @@ import lombok.ToString;
 
 import java.util.Objects;
 
-@ToString
+@ToString(callSuper = true)
 @Getter
 @Table(indexes = {
-        @Index(columnList = "userId"),
         @Index(columnList = "email", unique = true),
         @Index(columnList = "createdAt"),
         @Index(columnList = "createdBy")
@@ -30,7 +29,7 @@ public class UserAccount extends AuditingFields{
     private String userPassword;
 
     @Setter
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String email;
 
     @Setter
