@@ -19,7 +19,12 @@ public interface ArticleRepository extends
         , QuerydslPredicateExecutor<Article>
         , QuerydslBinderCustomizer<QArticle>
 {
-    Page<Article> findByTitle(String searchKeyword, Pageable pageable);
+    Page<Article> findByTitleContaining(String title, Pageable pageable);
+    Page<Article> findByContentContaining(String content, Pageable pageable);
+    Page<Article> findByUserAccount_UserIdContaining(String userId, Pageable pageable);
+    Page<Article> findByUserAccount_NicknameContainig(String nickname, Pageable pageable);
+    Page<Article> findByHashtag(String hashtag, Pageable pageable);
+
 
     @Override
     // java8 부터 interface 를 직접 구현이 가능해짐.
