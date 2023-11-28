@@ -105,13 +105,16 @@ public class ArticleServiceTest {
         given(articleRepository.findById(articleId)).willReturn(Optional.empty());
 
         //When
-        //Throwable t = Assertions.catchThrowable(() -> svc.getArticle(articleId));
-        ArticleWithCommentsDto dto = svc.getArticle(articleId);
+        Throwable t = Assertions.catchThrowable(() -> svc.getArticle(articleId));
+        //ArticleWithCommentsDto dto = svc.getArticle(articleId);
 
         //Then
-        assertThat(dto)
-                .withFailMessage("게시글이 없습니다 - articleId: " + articleId)
-                        .isNotNull();
+        assertThat(t)
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("게시글이 없습니다 - articleId: " + articleId);
+//        assertThat(dto)
+//                .withFailMessage("게시글이 없습니다 - articleId: " + articleId)
+//                        .isNotNull();
 
         then(articleRepository).should().findById(articleId);
     }
@@ -184,6 +187,7 @@ public class ArticleServiceTest {
    }
 
     private Article createArticle() {
+
        return Article.of(createUserAccount(), "title", "content", "#java");
     }
 
@@ -193,6 +197,7 @@ public class ArticleServiceTest {
     }
 
     private ArticleDto createArticleDto() {
+
        return createArticleDto("title", "content", "#java");
     }
 

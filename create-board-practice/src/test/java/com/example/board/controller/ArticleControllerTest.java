@@ -29,7 +29,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(SecurityConfig.class)
 @WebMvcTest(ArticleController.class)
 public class ArticleControllerTest {
-    private final MockMvc mvc;
+     private final MockMvc mvc;
+
+    // articleService 를 테스트에서 배제하고
+    // 컨트롤러 테스트가 api의 입출력만 보게끔 하기 위해 mocking 함.
+    // 메소드 파라미터로 넣을 수 없음.
+    // 그래서 mockMvc 는 생성자로 주입하고 mockBean 은 선언함.
+    // @Autowired private MockMvc mvc; <- 이렇게 선언해도 됨.
+    @MockBean private ArticleService articleService;
 
     // api 데이터의 입출력만 보이게 하기 위해 mocking 을 해야함.
     // 그래서 연결을 끊어주기 위해 사용.
@@ -39,10 +46,11 @@ public class ArticleControllerTest {
         this.mvc = mvc;
     }
 
-    @DisplayName("[View][GET] 게시글 리스트 페이지 테스트")
+    @DisplayName("[View][GET] 게시글 리스트 페이지 테스트 - 정상호출")
     @Test
     void givenNothing_whenSearchArticle_thenReturnArticle() throws Exception {
         // given
+        // eq(null) : 빈값만 조회되도록.
         given(articleService.searchArticle(eq(null), eq(null), any(Pageable.class))).willReturn(Page.empty());
 
         // when & then
@@ -55,7 +63,7 @@ public class ArticleControllerTest {
         then(articleService).should().searchArticle(eq(null), eq(null), any(Pageable.class));
     }
 
-    @DisplayName("[View][GET] 게시글 상세 페이지 테스트")
+    @DisplayName("[View][GET] 게시글 상세 페이지 테스트 - 정상호출")
     @Test
     void givenArticleId_whenGetArticle_thenReturnArticle() throws Exception {
         // given
@@ -71,7 +79,6 @@ public class ArticleControllerTest {
                 .andExpect(model().attributeExists("articleComments"));
 
         then(articleService).should().getArticle(articleId);
-
     }
 
     @Disabled("개발중")
@@ -79,12 +86,13 @@ public class ArticleControllerTest {
     @Test
     void createTest3() throws Exception {
         // given
+        // ToDo:추후에 추가.
+        // when & then
         mvc.perform(get("/articles/search"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.TEXT_HTML))
                 .andExpect(view().name("articles/search"));
 
-        // when & then
     }
 
     @Disabled("개발중")
@@ -92,12 +100,65 @@ public class ArticleControllerTest {
     @Test
     void createTest4() throws Exception {
         // given
+        // ToDo:추후에 추가.
+
+        // when & then
         mvc.perform(get("/articles/search-hashtag"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.TEXT_HTML))
                 .andExpect(view().name("articles/search-hashtag"));
 
-        // when & then
+    }
+
+    private ArticleWithCommentsDto createArticleWithCommentsDto(Long articleId) {
+        return ArticleWithCommentsDto.of(
+                articleId
+                , createUserAccountDto(articleId)
+                , createArticle().getArticleComments()
+                        .stream().map(ArticleCommentDto::from)
+                        .collect(Collectors.toSet())
+                , "this is title."
+                , "this is content."
+                , "#dto"
+                , LocalDateTime.now()
+                , "kkk"
+                , LocalDateTime.now()
+                , "kkk"
+        );
+    }
+
+    private UserAccountDto createUserAccountDto(Long articleId){
+        return UserAccountDto.of(
+                 articleId
+                ,"kwgyeong"
+                , "password"
+                ,"kwgyeong0423@gmail.com"
+                , "kwg"
+                ,"this is memo"
+                , LocalDateTime.now()
+                , "kkk"
+                , LocalDateTime.now()
+                , "kkk"
+        );
+    }
+
+    private Article createArticle(){
+        return Article.of(
+                 createUserAccount()
+                ,"this is title"
+                , "this is content"
+                , "#springboot"
+        );
+    }
+
+    private UserAccount createUserAccount(){
+        return UserAccount.of(
+                "kwgyeong"
+                , "password"
+                ,"kwgyeong0423@gmail.com"
+                , "kwg"
+                ,"this is memo"
+        );
     }
 
 
