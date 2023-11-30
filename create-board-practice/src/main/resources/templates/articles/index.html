@@ -47,43 +47,41 @@
             </div>
         </div>
 
-        <table class="table">
+        <table class="table" id="article-table">
             <thead>
-            <tr>
-                <th class="col-6">제목</th>
-                <th class="col-2">해시태그</th>
-                <th class="col">작성자</th>
-                <th class="col">작성일</th>
-            </tr>
+                <tr>
+                    <th class="title col-6">제목</th>
+                    <th class="hashtag col-2">해시태그</th>
+                    <th class="user-id col">작성자</th>
+                    <th class="created-at col">작성일</th>
+                </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>첫글</td>
-                <td>#red</td>
-                <td>김우경</td>
-                <td>2023-09-05 10:10</td>
-            </tr>
-            <tr>
-                <td>두번째 글</td>
-                <td>#yellow</td>
-                <td>김우경</td>
-                <td>2023-09-05 10:10</td>
-            </tr>
-            <tr>
-                <td>세번째 글</td>
-                <td>#blue</td>
-                <td>김우경2</td>
-                <td>2023-09-06 10:10</td>
-            </tr>
+                <tr>
+                    <td class="title"><a>첫글</a></td>
+                    <td class="hashtag">#red</td>
+                    <td class="user-id">김우경</td>
+                    <td class="created-at"><time>2023-09-05</time></td>
+                </tr>
+                <tr>
+                    <td>두번째 글</td>
+                    <td>#yellow</td>
+                    <td>김우경</td>
+                    <td>2023-09-05 10:10</td>
+                </tr>
+                <tr>
+                    <td>세번째 글</td>
+                    <td>#blue</td>
+                    <td>김우경2</td>
+                    <td>2023-09-06 10:10</td>
+                </tr>
             </tbody>
         </table>
 
-        <nav aria-label="Page navigation example">
+        <nav aria-label="Page navigation example" id="pagination">
             <ul class="pagination justify-content-center">
                 <li class="page-item"><a class="page-link" href="#">Previous</a></li>
                 <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
                 <li class="page-item"><a class="page-link" href="#">Next</a></li>
             </ul>
         </nav>
