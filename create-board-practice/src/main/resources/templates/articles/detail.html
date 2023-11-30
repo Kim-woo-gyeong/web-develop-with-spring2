@@ -67,14 +67,27 @@
                 </ul>
             </section>
         </div>
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-            </ul>
-        </nav>
+        <div class="row g-5">
+            <nav id="pagination" aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo; prev</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">next &raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </main>
 
-    <footer id="footer"></footer>
+    <footer id="footer">
+        <hr>
+        푸터 삽입부
+    </footer>
 </body>
 </html>

@@ -51,6 +51,7 @@ public class ArticleController {
 
         modelMap.addAttribute("article",response);
         modelMap.addAttribute("articleComments", response.articleCommentsResponse());
+        modelMap.addAttribute("totalCount", articleService.getArticleCount());
         return "articles/detail";
     }
 }
