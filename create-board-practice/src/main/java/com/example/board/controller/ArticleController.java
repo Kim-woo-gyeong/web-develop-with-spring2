@@ -4,7 +4,9 @@ import com.example.board.domain.type.SearchType;
 import com.example.board.dto.response.ArticleResponse;
 import com.example.board.dto.response.ArticleWithCommentResponse;
 import com.example.board.service.ArticleService;
+import com.example.board.service.PaginationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -23,6 +25,7 @@ import java.util.List;
 public class ArticleController {
 
     private final ArticleService articleService;
+    private final PaginationService paginationService;
 
     @GetMapping
     public String articles(
@@ -33,9 +36,11 @@ public class ArticleController {
     ){
         // svc.searchArticle return type 은 dto.
         // dto 는 모든 엔티티 정보를 다 담고 있음. 그래서 response 로 한번더 가공한 것을 return 함.
-        modelMap.addAttribute("articles",
-                                articleService.searchArticle(searchType, searchValue, pageable)
-                                        .map(ArticleResponse::from));
+        Page<ArticleResponse> articles = articleService.searchArticle(searchType, searchValue, pageable)
+                                                       .map(ArticleResponse::from);
+        List<Integer> barNumbers = paginationService.getPaginationBarNumbers(pageable.getPageNumber(), articles.getTotalPages());
+        modelMap.addAttribute("articles", articles);
+        modelMap.addAttribute("paginationBarNumbers", barNumbers);
         return "articles/index";
     }
 

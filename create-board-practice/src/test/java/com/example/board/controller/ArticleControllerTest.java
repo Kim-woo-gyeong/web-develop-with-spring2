@@ -8,6 +8,7 @@ import com.example.board.dto.ArticleCommentDto;
 import com.example.board.dto.ArticleWithCommentsDto;
 import com.example.board.dto.UserAccountDto;
 import com.example.board.service.ArticleService;
+import com.example.board.service.PaginationService;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,12 +17,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,6 +45,7 @@ public class ArticleControllerTest {
     // 그래서 mockMvc 는 생성자로 주입하고 mockBean 은 선언함.
     // @Autowired private MockMvc mvc; <- 이렇게 선언해도 됨.
     @MockBean private ArticleService articleService;
+    @MockBean private PaginationService paginationService;
 
     public ArticleControllerTest(@Autowired MockMvc mvc) {
         this.mvc = mvc;
@@ -52,7 +57,7 @@ public class ArticleControllerTest {
         // given
         // eq(null) : 빈값만 조회되도록.
         given(articleService.searchArticle(eq(null), eq(null), any(Pageable.class))).willReturn(Page.empty());
-
+        given(paginationService.getPaginationBarNumbers(anyInt(), anyInt())).willReturn(List.of(0,1,2,3,4));
         // when & then
         mvc.perform(get("/articles"))
                 .andExpect(status().isOk())
@@ -61,7 +66,7 @@ public class ArticleControllerTest {
                 .andExpect(model().attributeExists("articles"));
 
         then(articleService).should().searchArticle(eq(null), eq(null), any(Pageable.class));
-
+        then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
     }
 
     @DisplayName("[View][GET] 게시글 상세 페이지 테스트 - 정상호출")
@@ -80,6 +85,37 @@ public class ArticleControllerTest {
                 .andExpect(model().attributeExists("articleComments"));
 
         then(articleService).should().getArticle(articleId);
+    }
+
+    @DisplayName("[View][GET] 게시글 리스트 페이지(게시판) 테스트 - 페이징 & 정렬기능")
+    @Test
+    void givenNothing_whenPaginationBarNumbers_thenArticlesWithPagination() throws Exception {
+        // given
+        String sortName = "title";
+        String direction = "DESC";
+        int pageNumber = 0;
+        int pageSize = 5;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Order.desc(sortName)));
+        List<Integer> barNumbers = List.of(1,2,3,4,5);
+
+        given(articleService.searchArticle(null, null, pageable)).willReturn(Page.empty());
+        given(paginationService.getPaginationBarNumbers(pageable.getPageNumber(), Page.empty().getTotalPages())).willReturn(barNumbers);
+
+        // when & then
+        mvc.perform(
+                get("/articles")
+                        .queryParam("page", String.valueOf(pageNumber))
+                        .queryParam("size", String.valueOf(pageSize))
+                        .queryParam("sort", sortName + "," + direction)
+        )
+        .andExpect(status().isOk())
+        .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+        .andExpect(view().name("articles/index"))
+        .andExpect(model().attributeExists("articles"))
+        .andExpect(model().attribute("paginationBarNumbers", barNumbers));
+
+        then(articleService).should().searchArticle(null, null, pageable);
+        then(paginationService).should().getPaginationBarNumbers(pageable.getPageNumber(), Page.empty().getTotalPages());
     }
 
     @Disabled("개발중")
