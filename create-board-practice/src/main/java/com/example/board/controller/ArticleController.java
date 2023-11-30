@@ -6,6 +6,7 @@ import com.example.board.dto.ArticleDto;
 import com.example.board.dto.response.ArticleResponse;
 import com.example.board.dto.response.ArticleWithCommentResponse;
 import com.example.board.service.ArticleService;
+import com.example.board.service.PaginationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,23 +27,33 @@ import java.util.List;
 public class ArticleController {
 
     private final ArticleService articleService;
+    private final PaginationService paginationService;
 
     @GetMapping
     public String articles(
             @RequestParam(required = false) SearchType searchType,
-            @RequestParam(required = false) String searchKeyword,
-            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
-            ModelMap modelMap){
-        Page<ArticleResponse> articles = articleService.searchArticle(searchType, searchKeyword, pageable).map(ArticleResponse::from);
+            @RequestParam(required = false) String searchValue,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable,
+            ModelMap modelMap
+    ){
+        // svc.searchArticle return type 은 dto.
+        // dto 는 모든 엔티티 정보를 다 담고 있음. 그래서 response 로 한번더 가공한 것을 return 함.
+        Page<ArticleResponse> articles = articleService.searchArticle(searchType, searchValue, pageable)
+                                                       .map(ArticleResponse::from);
+        List<Integer> barNumbers = paginationService.getPaginationBarNumbers(pageable.getPageNumber(), articles.getTotalPages());
         modelMap.addAttribute("articles", articles);
+        modelMap.addAttribute("paginationBarNumbers", barNumbers);
         return "articles/index";
     }
 
     @GetMapping("/{articleId}")
-    public String article(@PathVariable Long articleId, ModelMap modelMap){
-        ArticleWithCommentResponse article = ArticleWithCommentResponse.from(articleService.getArticle(articleId));
-        modelMap.addAttribute("article", article);
-        modelMap.addAttribute("articleComments", article.articleCommentsResponses());
+
+        ArticleWithCommentResponse response = ArticleWithCommentResponse.from(articleService.getArticle(articleId));
+
+        modelMap.addAttribute("article",response);
+        modelMap.addAttribute("articleComments", response.articleCommentsResponse());
+        modelMap.addAttribute("totalCount", articleService.getArticleCount());
+
         return "articles/detail";
     }
 }
