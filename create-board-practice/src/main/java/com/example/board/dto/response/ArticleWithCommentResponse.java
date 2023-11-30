@@ -15,7 +15,7 @@ public record ArticleWithCommentResponse(
         LocalDateTime createdAt,
         String email,
         String nickname,
-        Set<ArticleCommentResponse> articleCommentsResponse) {
+        Set<ArticleCommentResponse> articleCommentsResponses) {
 
     public static ArticleWithCommentResponse of(
             Long id,
@@ -25,9 +25,9 @@ public record ArticleWithCommentResponse(
             LocalDateTime createdAt,
             String email,
             String nickname,
-            Set<ArticleCommentResponse> articleCommentsResponse
+            Set<ArticleCommentResponse> articleCommentsResponses
     ){
-        return new ArticleWithCommentResponse(id, title, content, hashtag, createdAt, email, nickname, articleCommentsResponse);
+        return new ArticleWithCommentResponse(id, title, content, hashtag, createdAt, email, nickname, articleCommentsResponses);
     }
 
     public static ArticleWithCommentResponse from(ArticleWithCommentsDto dto){

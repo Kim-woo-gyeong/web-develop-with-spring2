@@ -1,6 +1,8 @@
 package com.example.board.controller;
 
+import com.example.board.domain.Article;
 import com.example.board.domain.type.SearchType;
+import com.example.board.dto.ArticleDto;
 import com.example.board.dto.response.ArticleResponse;
 import com.example.board.dto.response.ArticleWithCommentResponse;
 import com.example.board.service.ArticleService;
@@ -45,13 +47,13 @@ public class ArticleController {
     }
 
     @GetMapping("/{articleId}")
-    public String article(@PathVariable Long articleId, ModelMap modelMap){
 
         ArticleWithCommentResponse response = ArticleWithCommentResponse.from(articleService.getArticle(articleId));
 
         modelMap.addAttribute("article",response);
         modelMap.addAttribute("articleComments", response.articleCommentsResponse());
         modelMap.addAttribute("totalCount", articleService.getArticleCount());
+
         return "articles/detail";
     }
 }
