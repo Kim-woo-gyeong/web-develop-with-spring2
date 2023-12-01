@@ -1,6 +1,8 @@
 package com.example.board.controller;
 
 import com.example.board.config.SecurityConfig;
+import com.example.board.domain.Article;
+import com.example.board.domain.UserAccount;
 import com.example.board.dto.ArticleCommentDto;
 import com.example.board.dto.ArticleWithCommentsDto;
 import com.example.board.dto.UserAccountDto;
@@ -23,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -33,23 +36,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(SecurityConfig.class)
 @WebMvcTest(ArticleController.class)
 public class ArticleControllerTest {
-     private final MockMvc mvc;
-
     // articleService 를 테스트에서 배제하고
     // 컨트롤러 테스트가 api의 입출력만 보게끔 하기 위해 mocking 함.
     // 메소드 파라미터로 넣을 수 없음.
     // 그래서 mockMvc 는 생성자로 주입하고 mockBean 은 선언함.
     // @Autowired private MockMvc mvc; <- 이렇게 선언해도 됨.
-    @MockBean private ArticleService articleService;
-    @MockBean private PaginationService paginationService;
-
-    // api 데이터의 입출력만 보이게 하기 위해 mocking 을 해야함.
-    // 그래서 연결을 끊어주기 위해 사용.
-    @MockBean private ArticleService articleService;
+     private final MockMvc mvc;
 
     public ArticleControllerTest(@Autowired MockMvc mvc) {
         this.mvc = mvc;
     }
+    // api 데이터의 입출력만 보이게 하기 위해 mocking 을 해야함.
+    // 그래서 연결을 끊어주기 위해 사용.
+    @MockBean private ArticleService articleService;
+    @MockBean private PaginationService paginationService;
+
 
     @DisplayName("[View][GET] 게시글 리스트 페이지 테스트 - 정상호출")
     @Test
@@ -145,23 +146,6 @@ public class ArticleControllerTest {
                 .andExpect(content().contentType(MediaType.TEXT_HTML))
                 .andExpect(view().name("articles/search-hashtag"));
 
-    }
-
-    private ArticleWithCommentsDto createArticleWithCommentsDto(Long articleId) {
-        return ArticleWithCommentsDto.of(
-                articleId
-                , createUserAccountDto(articleId)
-                , createArticle().getArticleComments()
-                        .stream().map(ArticleCommentDto::from)
-                        .collect(Collectors.toSet())
-                , "this is title."
-                , "this is content."
-                , "#dto"
-                , LocalDateTime.now()
-                , "kkk"
-                , LocalDateTime.now()
-                , "kkk"
-        );
     }
 
     private UserAccountDto createUserAccountDto(Long articleId){
