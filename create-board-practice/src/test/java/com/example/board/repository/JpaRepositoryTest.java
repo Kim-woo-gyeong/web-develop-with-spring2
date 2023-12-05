@@ -52,7 +52,7 @@ public class JpaRepositoryTest {
         List<Article> articles = articleRepository.findAll();
         // Then
         Assertions.assertThat(articles)
-                  .isNotNull().hasSize(1);
+                  .isNotNull().hasSize(500);
     }
 
     @DisplayName("insert 테스트")
@@ -92,7 +92,7 @@ public class JpaRepositoryTest {
 
 
         // Then
-        Assertions.assertThat(savedArticle).hasFieldOrPropertyWithValue("hashTag", updateHashTag);
+        Assertions.assertThat(savedArticle).hasFieldOrPropertyWithValue("hashtag", updateHashTag);
     }
 
     @DisplayName("delete 테스트")
@@ -116,7 +116,7 @@ public class JpaRepositoryTest {
 
     private UserAccount createUserAccount() {
         return UserAccount.of(
-                "kwg",
+                "new_kwg",
                 "password",
                 "kwgyeong0423@gmail.com",
                 null,
