@@ -10,6 +10,7 @@ import java.util.Objects;
 @ToString(callSuper = true)
 @Getter
 @Table(indexes = {
+        @Index(columnList = "userId", unique = true),
         @Index(columnList = "email", unique = true),
         @Index(columnList = "createdAt"),
         @Index(columnList = "createdBy")
