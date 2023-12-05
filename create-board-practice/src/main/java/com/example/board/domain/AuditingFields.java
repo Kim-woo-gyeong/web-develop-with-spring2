@@ -32,6 +32,7 @@ public abstract class AuditingFields{
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @LastModifiedDate
+    @Column(nullable = false)
     protected LocalDateTime modifiedAt;   // 수정일자
 
     @LastModifiedBy
