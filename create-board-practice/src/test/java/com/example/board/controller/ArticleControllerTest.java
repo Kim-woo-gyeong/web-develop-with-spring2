@@ -3,6 +3,7 @@ package com.example.board.controller;
 import com.example.board.config.SecurityConfig;
 import com.example.board.domain.Article;
 import com.example.board.domain.UserAccount;
+import com.example.board.domain.type.SearchType;
 import com.example.board.dto.ArticleCommentDto;
 import com.example.board.dto.ArticleWithCommentsDto;
 import com.example.board.dto.UserAccountDto;
@@ -83,9 +84,37 @@ public class ArticleControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(view().name("articles/detail"))
                 .andExpect(model().attributeExists("article"))
-                .andExpect(model().attributeExists("articleComments"));
+                .andExpect(model().attributeExists("articleComments"))
+                .andExpect(model().attributeExists("paginationBarNumbers"))
+                .andExpect(model().attributeExists("searchTypes"));
 
         then(articleService).should().getArticle(articleId);
+    }
+
+    @DisplayName("[view][GET] 게시글 리스트 (게시판) 페이지 - 검색어와 함께 호출")
+    @Test
+    void givenSearchValue_whenArticleWithSearchValue_thenReturnArticles() throws Exception{
+        // given
+        SearchType searchType = SearchType.TITLE;
+        String searchValue = "제목";
+        given(articleService.searchArticle(eq(searchType), eq(searchValue), any(Pageable.class))).willReturn(Page.empty());
+        given(paginationService.getPaginationBarNumbers(anyInt(), anyInt())).willReturn(List.of(0,1,2,3,4));
+
+        // when
+        mvc.perform(
+                get("/articles")
+                        .queryParam("searchType", searchType.name())
+                        .queryParam("searchValue", searchValue)
+        )
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(view().name("articles/index"))
+                .andExpect(model().attributeExists("articles"))
+                .andExpect(model().attributeExists("searchTypes"));
+
+        //then
+        then(articleService).should().searchArticle(eq(searchType), eq(searchValue), any(Pageable.class));
+        then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
     }
 
     @DisplayName("[View][GET] 게시글 리스트 페이지(게시판) 테스트 - 페이징 & 정렬기능")
