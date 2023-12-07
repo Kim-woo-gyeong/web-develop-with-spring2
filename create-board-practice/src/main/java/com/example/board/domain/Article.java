@@ -36,7 +36,7 @@ public class Article extends AuditingFields{
     // casecade : 엄청난 종속성을 가지므로 유연하게 수정하는 것이 힘듬. 원치않는 데이터소실이 있을 수 있음.
     //            하나의 article 이 삭제되면 같이 삭제될 수 있도록.
     @ToString.Exclude
-    @OrderBy("id")
+    @OrderBy("createdAt DESC")
     // 양방향 ID
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
     private final Set<ArticleComment> articleComments = new LinkedHashSet<>();

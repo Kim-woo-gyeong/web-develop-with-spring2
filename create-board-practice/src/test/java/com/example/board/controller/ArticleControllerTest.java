@@ -162,19 +162,28 @@ public class ArticleControllerTest {
 
     }
 
-    @Disabled("개발중")
     @DisplayName("[View][GET] 게시글 해시태그 검색 페이지 테스트")
     @Test
-    void createTest4() throws Exception {
+    void givenNothing_whenSearchHashtag_thenReturnEmpyPage() throws Exception {
         // given
-        // ToDo:추후에 추가.
+        List<String> hashtags = List.of("#java", "#spring", "#mySql");
+        given(articleService.searchArticlesViaHashtag(eq(null), any(Pageable.class))).willReturn(Page.empty());
+        given(articleService.getHashtags()).willReturn(hashtags);
+        given(paginationService.getPaginationBarNumbers(anyInt(), anyInt())).willReturn(List.of(0,1,2,3,4));
 
         // when & then
         mvc.perform(get("/articles/search-hashtag"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.TEXT_HTML))
-                .andExpect(view().name("articles/search-hashtag"));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(view().name("articles/search-hashtag"))
+                .andExpect(model().attribute("articles", Page.empty()))
+                .andExpect(model().attribute("hashtags", hashtags))
+                .andExpect(model().attribute("searchType", SearchType.HASHTAG))
+                .andExpect(model().attributeExists("paginationBarNumbers"));
 
+        then(articleService).should().searchArticlesViaHashtag(eq(null), any(Pageable.class));
+        then(articleService).should().getHashtags();
+        then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
     }
 
     private UserAccountDto createUserAccountDto(Long articleId){
