@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -185,6 +186,59 @@ public class ArticleServiceTest {
        //Then
        then(articleRepository).should().deleteById(articleId);
    }
+
+   // 해시태그 검색 페이지 구현하기
+   @DisplayName("[해시태그페이지]검색어 없이 해시태그 검색하면, 빈 페이지를 반환한다.")
+   @Test
+   void givenNothing_whenSearchViaHashtag_thenRequrnPageEmpty(){
+       //given
+       Pageable pageable = Pageable.ofSize(20);
+
+       // when
+       Page<ArticleDto> articles = svc.searchArticlesViaHashtag(null, pageable);
+
+       // then
+       //empty 페이지를 보내줄거면 persistent 영역까지 내려갈 필요없다
+       assertThat(articles).isEqualTo(Page.empty(pageable));
+       then(articleRepository).shouldHaveNoInteractions();
+   }
+
+    @DisplayName("[해시태그페이지]해시태그 검색하면, 게시판 페이지를 반환한다.")
+    @Test
+    void givenHashtag_whenSearchViaHashtag_thenReturnArticle(){
+       // given
+        Pageable pageable = Pageable.ofSize(20);
+        String hashtag = "#java";
+        given(articleRepository.findByHashtag(hashtag, pageable)).willReturn(Page.empty(pageable));
+
+        // when
+        Page<ArticleDto> articles = svc.searchArticlesViaHashtag(hashtag, pageable);
+
+        // then
+        assertThat(articles).isEqualTo(Page.empty(pageable));
+        then(articleRepository).should().findByHashtag(hashtag, pageable);
+    }
+
+    /*
+        중복되는 해시태그도 있을거고 없는 게시글도 있을것임.
+        유니크하게 구분된 해시태그 리스트를 반환하는 것을 개발할것..
+    */
+    @DisplayName("[해시태그페이지]해시태그를 조회하면, 유니크 해시태그 리스트를 반환한다.")
+    @Test
+    void givenNothing_whenDistinctHAshtag_thenReturnListHashtag(){
+        //given
+        // JPA 는 도메인 단위로 출력을 함. 특정 필드만 뽑아서 출력하는 쿼리를 만들 수 없다.
+        // -> 이것을 해결하기 위해서 Querydsl 을 사용해야 함!
+        List<String> expected = List.of("#java", "#spring", "#boot");
+        given(articleRepository.findAllDistinctHashtags()).willReturn(expected);
+
+        // when
+        List<String> actual = svc.getHashtags();
+
+        // then
+        assertThat(actual).isEqualTo(expected);
+        then(articleRepository).should().findAllDistinctHashtags();
+    }
 
     private Article createArticle() {
 
