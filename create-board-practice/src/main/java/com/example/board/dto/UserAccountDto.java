@@ -5,7 +5,6 @@ import com.example.board.domain.UserAccount;
 import java.time.LocalDateTime;
 
 public record UserAccountDto(
-        Long id,
         String userId,
         String userPassword,
         String email,
@@ -16,8 +15,16 @@ public record UserAccountDto(
         LocalDateTime modifiedAt,
         String modifiedBy) {
 
-    public static UserAccountDto of(Long id,
-                                    String userId,
+    /* 저장을 할때, modified_at/by , created_at/by 는 자동으로 입력 될 값. */
+    public static UserAccountDto of( String userId,
+                                    String userPassword,
+                                    String email,
+                                    String nickname,
+                                    String memo){
+        return new UserAccountDto(userId, userPassword, email, nickname, memo, null, null, null, null);
+    }
+
+    public static UserAccountDto of(String userId,
                                     String userPassword,
                                     String email,
                                     String nickname,
@@ -26,7 +33,7 @@ public record UserAccountDto(
                                     String createdBy,
                                     LocalDateTime modifiedAt,
                                     String modifiedBy){
-        return new UserAccountDto(id, userId, userPassword, email, nickname, memo, createdAt, createdBy, modifiedAt, modifiedBy);
+        return new UserAccountDto(userId, userPassword, email, nickname, memo, createdAt, createdBy, modifiedAt, modifiedBy);
     }
 
     /* Entity를 Dto로 변경
@@ -34,8 +41,7 @@ public record UserAccountDto(
     * Article 의 변경은 Dto에 영향을 끼침.
     * */
     public static UserAccountDto from(UserAccount entity){
-        return new UserAccountDto(entity.getId(),
-                                  entity.getUserId(),
+        return new UserAccountDto(entity.getUserId(),
                                   entity.getUserPassword(),
                                   entity.getEmail(),
                                   entity.getNickname(),
