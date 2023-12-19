@@ -29,6 +29,7 @@ public class Article extends AuditingFields{
     private String content; // 본문
 
     @Setter @ManyToOne(optional = false)
+    @JoinColumn(name="userId")
     private UserAccount userAccount;    // 유저정보(ID)
 
     // article 에 대한 comments 를 중복허용하지 않고 볼 수 있도록 하겠다.

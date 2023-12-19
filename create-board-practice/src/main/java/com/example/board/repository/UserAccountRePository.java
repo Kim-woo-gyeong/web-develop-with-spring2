@@ -12,7 +12,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource
 public interface UserAccountRePository extends
-        JpaRepository<UserAccount, Long>
+        JpaRepository<UserAccount, String>
         , QuerydslPredicateExecutor<UserAccount>
         , QuerydslBinderCustomizer<QUserAccount> {
 

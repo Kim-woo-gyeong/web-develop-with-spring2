@@ -87,7 +87,7 @@ public class ArticleServiceTest {
        given(articleRepository.findById(articleId)).willReturn(Optional.of(article));
 
        //When
-       ArticleWithCommentsDto dto = svc.getArticle(articleId);
+       ArticleWithCommentsDto dto = svc.getArticleWithComments(articleId);
 
        //Then
        Assertions.assertThat(dto)
@@ -106,8 +106,8 @@ public class ArticleServiceTest {
         given(articleRepository.findById(articleId)).willReturn(Optional.empty());
 
         //When
-        Throwable t = Assertions.catchThrowable(() -> svc.getArticle(articleId));
-        //ArticleWithCommentsDto dto = svc.getArticle(articleId);
+        Throwable t = Assertions.catchThrowable(() -> svc.getArticleWithComments(articleId));
+        //ArticleWithCommentsDto dto = svc.getArticleWithComments(articleId);
 
         //Then
         assertThat(t)
@@ -271,7 +271,6 @@ public class ArticleServiceTest {
 
     private UserAccountDto createUserAccountDto() {
        return UserAccountDto.of(
-               1L,
                "kwg",
                "password",
                "email",
