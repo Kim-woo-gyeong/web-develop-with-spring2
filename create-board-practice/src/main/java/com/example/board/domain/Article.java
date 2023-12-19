@@ -12,6 +12,7 @@ import java.util.Set;
 @Getter
 @Table(indexes = {
         @Index(columnList = "title"),
+        @Index(columnList = "hashtag"),
         @Index(columnList = "createdAt"),
         @Index(columnList = "createdBy")
 })
@@ -52,8 +53,6 @@ public class Article extends AuditingFields{
         this.title = title;
         this.content = content;
         this.hashtag = hashtag;
-        this.createdBy = createdBy;
-        this.modifiedBy = createdBy;
     }
 
     public static Article of(UserAccount userAccount, String title, String content, String hashtag){
