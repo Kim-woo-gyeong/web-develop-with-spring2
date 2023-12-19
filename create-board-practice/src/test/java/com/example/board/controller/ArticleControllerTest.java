@@ -3,13 +3,12 @@ package com.example.board.controller;
 import com.example.board.config.SecurityConfig;
 import com.example.board.domain.Article;
 import com.example.board.domain.UserAccount;
-import com.example.board.domain.type.SearchType;
-import com.example.board.dto.ArticleCommentDto;
+import com.example.board.domain.type.FormStatus;
+import com.example.board.domain.constant.SearchType;
 import com.example.board.dto.ArticleWithCommentsDto;
 import com.example.board.dto.UserAccountDto;
 import com.example.board.service.ArticleService;
 import com.example.board.service.PaginationService;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -76,7 +74,9 @@ public class ArticleControllerTest {
     void givenArticleId_whenGetArticle_thenReturnArticle() throws Exception {
         // given
         Long articleId = 1L;
-        given(articleService.getArticle(articleId)).willReturn(createArticleWithCommentsDto(articleId));
+        Long totalCount = 1L;
+        given(articleService.getArticleWithComments(articleId)).willReturn(createArticleWithCommentsDto(articleId));
+        given(articleService.getArticleCount()).willReturn(totalCount);
 
         // when & then
         mvc.perform(get("/articles/"+articleId))
@@ -85,10 +85,10 @@ public class ArticleControllerTest {
                 .andExpect(view().name("articles/detail"))
                 .andExpect(model().attributeExists("article"))
                 .andExpect(model().attributeExists("articleComments"))
-                .andExpect(model().attributeExists("paginationBarNumbers"))
-                .andExpect(model().attributeExists("searchTypes"));
+                .andExpect(model().attribute("totalCount", totalCount));
 
-        then(articleService).should().getArticle(articleId);
+        then(articleService).should().getArticleWithComments(articleId);
+        then(articleService).should().getArticleCount();
     }
 
     @DisplayName("[view][GET] 게시글 리스트 (게시판) 페이지 - 검색어와 함께 호출")
@@ -148,23 +148,9 @@ public class ArticleControllerTest {
         then(paginationService).should().getPaginationBarNumbers(pageable.getPageNumber(), Page.empty().getTotalPages());
     }
 
-    @Disabled("개발중")
-    @DisplayName("[View][GET] 게시글 검색 전용 페이지 테스트")
-    @Test
-    void createTest3() throws Exception {
-        // given
-        // ToDo:추후에 추가.
-        // when & then
-        mvc.perform(get("/articles/search"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.TEXT_HTML))
-                .andExpect(view().name("articles/search"));
-
-    }
-
     @DisplayName("[View][GET] 게시글 해시태그 검색 페이지 테스트")
     @Test
-    void givenNothing_whenSearchHashtag_thenReturnEmpyPage() throws Exception {
+    void givenNothing_whensearchArticleHashtag_thenReturnEmpyPage() throws Exception {
         // given
         List<String> hashtags = List.of("#java", "#spring", "#mySql");
         given(articleService.searchArticlesViaHashtag(eq(null), any(Pageable.class))).willReturn(Page.empty());
@@ -186,19 +172,19 @@ public class ArticleControllerTest {
         then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
     }
 
-    private UserAccountDto createUserAccountDto(Long articleId){
-        return UserAccountDto.of(
-                 articleId
-                ,"kwgyeong"
-                , "password"
-                ,"kwgyeong0423@gmail.com"
-                , "kwg"
-                ,"this is memo"
-                , LocalDateTime.now()
-                , "kkk"
-                , LocalDateTime.now()
-                , "kkk"
-        );
+    @DisplayName(("[View][GET] 새 게시글 작성 페이지"))
+    @Test
+    void givenNothing_whenRequsting_thenReturnNewArticlePage() throws Exception{
+        // given
+
+        //when
+        mvc.perform(get("/articles/form"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(view().name("articles/form"))
+                .andExpect(model().attribute("formStatus", FormStatus.CREATE));
+
+        //then
     }
 
     private Article createArticle(){
@@ -238,8 +224,7 @@ public class ArticleControllerTest {
 
     private UserAccountDto createUserAccountDto() {
         return UserAccountDto.of(
-                1L
-                ,"kwgyeong"
+                "kwgyeong"
                 ,"password!@#"
                 ,"kwgyeong0423@naver.com"
                 ,"굥2"
