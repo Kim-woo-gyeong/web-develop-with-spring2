@@ -1,11 +1,13 @@
 package com.example.board.service;
 
 import com.example.board.domain.Article;
-import com.example.board.domain.type.SearchType;
-import com.example.board.dto.ArticleCommentDto;
+import com.example.board.domain.UserAccount;
+import com.example.board.domain.constant.SearchType;
 import com.example.board.dto.ArticleDto;
 import com.example.board.dto.ArticleWithCommentsDto;
+import com.example.board.dto.UserAccountDto;
 import com.example.board.repository.ArticleRepository;
+import com.example.board.repository.UserAccountRePository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,7 @@ import java.util.List;
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
+    private final UserAccountRePository userAccountRePository;
 
     @Transactional(readOnly = true)
     public Page<ArticleDto> searchArticle(SearchType searchType, String searchKeyword, Pageable pageable) {
@@ -45,14 +48,21 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public ArticleWithCommentsDto getArticle(Long Id) {
+    public ArticleWithCommentsDto getArticleWithComments(Long Id) {
         return articleRepository.findById(Id)
                                 .map(ArticleWithCommentsDto::from)
                                 .orElseThrow(() -> new EntityNotFoundException("게시글이 없습니다 - articleId: " + Id));
     }
 
+    @Transactional(readOnly = true)
+    public ArticleDto getArticle(Long articleId){
+        return articleRepository.findById(articleId).map(ArticleDto::from)
+                .orElseThrow(() -> new EntityNotFoundException("게시글이 없습니다. - articleId: " + articleId));
+    }
+
     public void saveArticle(ArticleDto dto) {
-        articleRepository.save(dto.toEntity());
+        UserAccount userAccount = userAccountRePository.getReferenceById(dto.userAccountDto().userId());
+        articleRepository.save(dto.toEntity(userAccount));
     }
 
     public void updateArticle(ArticleDto dto) {

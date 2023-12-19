@@ -55,6 +55,8 @@
             </attr>
         </attr>
 
+        <attr sel="#write-article" th:href="@{/articles/form}"/>
+
         <attr sel="#pagination">
             <attr sel="li[0]/a"
                   th:text="previous"
