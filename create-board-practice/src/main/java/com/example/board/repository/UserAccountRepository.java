@@ -11,7 +11,7 @@ import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource
-public interface UserAccountRePository extends
+public interface UserAccountRepository extends
         JpaRepository<UserAccount, String>
         , QuerydslPredicateExecutor<UserAccount>
         , QuerydslBinderCustomizer<QUserAccount> {

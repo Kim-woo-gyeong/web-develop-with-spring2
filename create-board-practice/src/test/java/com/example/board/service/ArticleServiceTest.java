@@ -7,7 +7,7 @@ import com.example.board.dto.ArticleDto;
 import com.example.board.dto.ArticleWithCommentsDto;
 import com.example.board.dto.UserAccountDto;
 import com.example.board.repository.ArticleRepository;
-import com.example.board.repository.UserAccountRePository;
+import com.example.board.repository.UserAccountRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -39,7 +39,7 @@ public class ArticleServiceTest {
    private ArticleRepository articleRepository;
 
    @Mock
-   private UserAccountRePository userAccountRePository;
+   private UserAccountRepository userAccountRePository;
 
    @DisplayName("검색어 없이 게시글을 검색하면, 게시글 페이지를 반환한다.")
    @Test

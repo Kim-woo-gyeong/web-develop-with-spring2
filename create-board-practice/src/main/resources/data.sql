@@ -4,6 +4,10 @@
 insert into user_account (user_id, user_password, nickname, email, memo, created_at, created_by, modified_at, modified_by) values
     ('uno', 'asdf1234', 'Uno', 'uno@mail.com', 'I am Uno.', now(), 'uno', now(), 'uno');
 
+insert into user_account (user_id, user_password, nickname, email, memo, created_at, created_by, modified_at, modified_by) values
+    ('kwgyeong0423', 'password1234', 'GyoungS2', 'kwgyeong0423@mail.com', 'I am Uno.', now(), 'uno', now(), 'uno');
+
+
 -- article 테이블에 레코드 추가
 insert into article (user_id, title, content, hashtag, created_at, created_by, modified_at, modified_by) values ('uno', 'Nulla mollis molestie lorem.', 'Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.', '#Teal', '2023-08-24 10:35:54', 'Bordie', '2023-09-21 17:06:51', 'Francois');
 insert into article (user_id, title, content, hashtag, created_at, created_by, modified_at, modified_by) values ('uno', 'Nulla justo.', 'Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.', '#Pink', '2023-08-05 22:51:25', 'Lorin', '2023-05-14 14:49:28', 'Llewellyn');

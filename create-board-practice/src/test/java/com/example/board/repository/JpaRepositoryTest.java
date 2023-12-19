@@ -5,18 +5,14 @@ import com.example.board.domain.Article;
 import com.example.board.domain.UserAccount;
 import com.example.board.dto.UserAccountDto;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 
+import java.time.LocalDateTime;
 import java.util.List;
-
-import static org.mockito.BDDMockito.*;
 /*
 * 23.09.27 test
 * */
@@ -30,13 +26,13 @@ import static org.mockito.BDDMockito.*;
 public class JpaRepositoryTest {
     private final ArticleRepository articleRepository;
     private final ArticleCommentRepository articleCommentRepository;
-    private final UserAccountRePository userAccountRepository;
+    private final UserAccountRepository userAccountRepository;
 
     // 생성자주입패턴 생성
     public JpaRepositoryTest(
                             @Autowired ArticleRepository articleRepository
                            ,@Autowired ArticleCommentRepository articleCommentRepository
-                           ,@Autowired UserAccountRePository userAccountRepository
+                           ,@Autowired UserAccountRepository userAccountRepository
     ) {
         this.articleRepository = articleRepository;
         this.articleCommentRepository = articleCommentRepository;

@@ -5,9 +5,8 @@ import com.example.board.domain.UserAccount;
 import com.example.board.domain.constant.SearchType;
 import com.example.board.dto.ArticleDto;
 import com.example.board.dto.ArticleWithCommentsDto;
-import com.example.board.dto.UserAccountDto;
 import com.example.board.repository.ArticleRepository;
-import com.example.board.repository.UserAccountRePository;
+import com.example.board.repository.UserAccountRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +24,7 @@ import java.util.List;
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
-    private final UserAccountRePository userAccountRePository;
+    private final UserAccountRepository userAccountRePository;
 
     @Transactional(readOnly = true)
     public Page<ArticleDto> searchArticle(SearchType searchType, String searchKeyword, Pageable pageable) {
