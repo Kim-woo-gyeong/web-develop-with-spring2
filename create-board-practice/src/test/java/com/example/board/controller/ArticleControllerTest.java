@@ -5,10 +5,13 @@ import com.example.board.domain.Article;
 import com.example.board.domain.UserAccount;
 import com.example.board.domain.type.FormStatus;
 import com.example.board.domain.constant.SearchType;
+import com.example.board.dto.ArticleDto;
 import com.example.board.dto.ArticleWithCommentsDto;
 import com.example.board.dto.UserAccountDto;
+import com.example.board.dto.request.ArticleRequest;
 import com.example.board.service.ArticleService;
 import com.example.board.service.PaginationService;
+import com.example.board.util.FormDataEncoder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +30,13 @@ import java.util.List;
 import java.util.Set;
 
 import static org.mockito.BDDMockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("article 컨트롤러 테스트")
 // 401 에러를 대응함.
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, FormDataEncoder.class})
 @WebMvcTest(ArticleController.class)
 public class ArticleControllerTest {
     // articleService 를 테스트에서 배제하고
@@ -41,9 +45,13 @@ public class ArticleControllerTest {
     // 그래서 mockMvc 는 생성자로 주입하고 mockBean 은 선언함.
     // @Autowired private MockMvc mvc; <- 이렇게 선언해도 됨.
      private final MockMvc mvc;
+     private FormDataEncoder formDataEncoder;
 
-    public ArticleControllerTest(@Autowired MockMvc mvc) {
+    public ArticleControllerTest(@Autowired MockMvc mvc,
+                                 @Autowired FormDataEncoder formDataEncoder) {
+
         this.mvc = mvc;
+        this.formDataEncoder = formDataEncoder;
     }
     // api 데이터의 입출력만 보이게 하기 위해 mocking 을 해야함.
     // 그래서 연결을 끊어주기 위해 사용.
@@ -187,9 +195,97 @@ public class ArticleControllerTest {
         //then
     }
 
-    private Article createArticle(){
-        return Article.of(
-                 createUserAccount()
+    @DisplayName(("[View][PPST] 새 게시글 등록 - 정상호출"))
+    @Test
+    void givenNewArticleInfo_whenInsert_thenSaveNewArticle() throws Exception{
+        //given
+        ArticleRequest articleRequest = ArticleRequest.of("new title", "new content", "#new");
+        willDoNothing().given(articleService).saveArticle(any(ArticleDto.class));
+
+        System.out.println(formDataEncoder.encode(articleRequest));
+        //when
+        mvc.perform(
+                post("/articles/form")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .content(formDataEncoder.encode(articleRequest))
+                        .with(csrf())
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/articles"))
+                .andExpect(redirectedUrl("/articles"));
+        //then
+        then(articleService).should().saveArticle(any(ArticleDto.class));
+    }
+
+    @DisplayName("[View][GET] 새 게시글 수정 페이지")
+    @Test
+    void givenNothing_whenUpdateArticle_thenArticleFormPage() throws Exception{
+        //given
+        Long articleId = 1L;
+        ArticleDto dto = createArticleDto();
+
+        given(articleService.getArticle(articleId)).willReturn(dto);
+
+        //when
+        mvc.perform(get("/articles/"+articleId+"/form"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(view().name("articles/form"))
+                .andExpect(model().attributeExists("article"))
+                .andExpect(model().attribute("formStatus", FormStatus.UPDATE));
+
+        //then
+        then(articleService).should().getArticle(articleId);
+    }
+
+    @DisplayName("[View][POST] 세 게시글 수정 - 정상호출")
+    @Test
+    void givenArticleUpdateInfo_whenUpdateArticle_thenArticlePage() throws Exception{
+        //given
+        Long articleId = 1L;
+        ArticleRequest articleRequest = ArticleRequest.of("new Title", "new Content", "#NEW");
+        willDoNothing().given(articleService).updateArticle(eq(articleId), any(ArticleDto.class));
+
+        //when
+        mvc.perform(
+                post("/articles/"+articleId+"/form")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .content(formDataEncoder.encode(articleRequest))
+                        .with(csrf())
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/articles/"+articleId))
+                .andExpect(redirectedUrl("/articles/"+articleId));
+
+        //then
+        then(articleService).should().updateArticle(eq(articleId), any(ArticleDto.class));
+
+    }
+
+    @DisplayName("[View][POST]게시글 삭제 - 정상호출")
+    @Test
+    void givenArticleId_whenDeleteArticle_thenArticlePage() throws Exception{
+        //given
+        Long articleId = 1L;
+        willDoNothing().given(articleService).deleteArticle(articleId);
+
+        //when
+        mvc.perform(
+                post("/articles/"+articleId+"/delete")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .with(csrf())
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/articles"))
+                .andExpect(redirectedUrl("/articles"));
+
+        //then
+        then(articleService).should().deleteArticle(articleId);
+    }
+
+    private ArticleDto createArticleDto(){
+        return ArticleDto.of(
+                 createUserAccountDto()
                 ,"this is title"
                 , "this is content"
                 , "#springboot"
