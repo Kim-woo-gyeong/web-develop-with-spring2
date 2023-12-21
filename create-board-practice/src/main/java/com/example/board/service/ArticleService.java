@@ -64,13 +64,13 @@ public class ArticleService {
         articleRepository.save(dto.toEntity(userAccount));
     }
 
-    public void updateArticle(ArticleDto dto) {
+    public void updateArticle(Long articleId, ArticleDto dto) {
         try{
         /*
         articleRepository.getReferenceById(dto.id()) VS articleRepository.findById
         두가지의 역할은 비슷하지만 내부동작이 다름.
         * */
-            Article article = articleRepository.getReferenceById(dto.id());
+            Article article = articleRepository.getReferenceById(articleId);
             if(dto.title() != null){ article.setTitle(dto.title()); }
             if(dto.content() != null){ article.setContent(dto.content()); }
             if(dto.hashtag() != null){ article.setHashtag(dto.hashtag()); }

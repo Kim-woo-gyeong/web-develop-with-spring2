@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -192,7 +193,7 @@ public class ArticleServiceTest {
 
         given(articleRepository.getReferenceById(dto.id())).willReturn(article);
        //When
-       svc.updateArticle(dto);
+       svc.updateArticle(dto.id(), dto);
 
        //Then
        assertThat(article).hasFieldOrPropertyWithValue("title",dto.title())
@@ -210,7 +211,7 @@ public class ArticleServiceTest {
 
         given(articleRepository.getReferenceById(dto.id())).willThrow(EntityNotFoundException.class);
         //When
-        svc.updateArticle(dto);
+        svc.updateArticle(dto.id(), dto);
 
         //Then
         then(articleRepository).should().getReferenceById(dto.id());
@@ -284,8 +285,9 @@ public class ArticleServiceTest {
     }
 
     private Article createArticle() {
-
-       return Article.of(createUserAccount(), "title", "content", "#java");
+        Article article = Article.of(createUserAccount(), "title", "content", "#java");
+        ReflectionTestUtils.setField(article, "id", 1L);
+       return article;
     }
 
     private UserAccount createUserAccount() {
